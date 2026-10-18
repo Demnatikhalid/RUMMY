@@ -159,6 +159,12 @@ console.log('--- بدء اختبار قواعد الرومي المغربي وا
         engine.moveCardInHand(0, 0, 3);
         assert(engine.players[0].hand[3].id === firstCardId, 'تغيير موقع الورقة في اليد من الفهرس 0 إلى 3 بنجاح');
 
+        // اختبار نقل ورقة إلى آخر اليد مباشرة (au dernier)
+        const targetLastIdx = engine.players[0].hand.length - 1;
+        const cardToMoveToLast = engine.players[0].hand[1].id;
+        engine.moveCardInHand(0, 1, targetLastIdx);
+        assert(engine.players[0].hand[targetLastIdx].id === cardToMoveToLast, 'نقل الورقة إلى نهاية اليد بنجاح (الموضع الأخير)');
+
         engine.discardCard(0, 0);
         assert(engine.currentTurnIndex === 1, 'دوران الدور في اتجاه عقارب الساعة: انتقل الدور للاعب 1');
 

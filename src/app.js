@@ -325,6 +325,57 @@ class App {
                 if (this.blackjack) this.blackjack.addBet(amount);
             });
         });
+
+        // منع أي ظهور لأيقونة المنع (🚫) نهائياً أثناء سحب الأوراق وإفلاتها في أي موضع بما في ذلك ما بعد آخر ورقة
+        const onGlobalDragOver = (e) => {
+            if (this.draggedCardIndex !== null && this.draggedCardIndex !== undefined) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+
+                const targetIdx = this.getHandDropIndex(e.clientX);
+                const cardEls = this.playerCardsRow.querySelectorAll('.card-item');
+                cardEls.forEach((el, i) => {
+                    if (i === targetIdx) {
+                        el.classList.add('drag-over');
+                    } else {
+                        el.classList.remove('drag-over');
+                    }
+                });
+            }
+        };
+
+        const onGlobalDrop = (e) => {
+            if (this.draggedCardIndex !== null && this.draggedCardIndex !== undefined) {
+                e.preventDefault();
+                this.justFinishedDrag = true;
+                const fromIdx = this.draggedCardIndex;
+                const toIdx = this.getHandDropIndex(e.clientX);
+
+                this.draggedCardIndex = null;
+                document.body.classList.remove('dragging-card-active');
+                document.querySelectorAll('.card-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+                document.querySelectorAll('.card-item.dragging').forEach(el => el.classList.remove('dragging'));
+
+                if (fromIdx !== toIdx) {
+                    this.rummy.moveCardInHand(this.rummy.mySeat, fromIdx, toIdx);
+                }
+                setTimeout(() => {
+                    this.justFinishedDrag = false;
+                }, 100);
+            }
+        };
+
+        this.playerCardsRow.addEventListener('dragover', onGlobalDragOver);
+        this.playerCardsRow.addEventListener('drop', onGlobalDrop);
+
+        const southZone = document.querySelector('.player-south-zone');
+        if (southZone) {
+            southZone.addEventListener('dragover', onGlobalDragOver);
+            southZone.addEventListener('drop', onGlobalDrop);
+        }
+
+        window.addEventListener('dragover', onGlobalDragOver);
+        window.addEventListener('drop', onGlobalDrop);
     }
 
     initMultiplayerEvents() {
@@ -807,9 +858,61 @@ class App {
         });
     }
 
+    getHandDropIndex(clientX) {
+        const localPlayer = this.rummy ? this.rummy.getLocalPlayer() : null;
+        if (!localPlayer || !localPlayer.hand || localPlayer.hand.length <= 1) {
+            return 0;
+        }
+
+        const cardElements = Array.from(this.playerCardsRow.querySelectorAll('.card-item'));
+        if (!cardElements.length) return localPlayer.hand.length - 1;
+
+        const firstRect = cardElements[0].getBoundingClientRect();
+        const lastRect = cardElements[cardElements.length - 1].getBoundingClientRect();
+
+        // في الواجهة العربية (RTL): البطاقة 0 في اليمين، والبطاقة الأخيرة في أقصى اليسار
+        const isRtl = firstRect.left > lastRect.left;
+
+        if (isRtl) {
+            // سحب نحو اليسار متجاوزاً آخر ورقة، حتى لو سحب بعيداً جداً (au dernier carte trop)
+            if (clientX <= lastRect.left + (lastRect.width * 0.6)) {
+                return cardElements.length - 1;
+            }
+            // سحب نحو اليمين متجاوزاً أول ورقة
+            if (clientX >= firstRect.right - (firstRect.width * 0.6)) {
+                return 0;
+            }
+        } else {
+            // الواجهة LTR
+            if (clientX >= lastRect.right - (lastRect.width * 0.6)) {
+                return cardElements.length - 1;
+            }
+            if (clientX <= firstRect.left + (firstRect.width * 0.6)) {
+                return 0;
+            }
+        }
+
+        // داخل نطاق الأوراق: إيجاد أقرب بطاقة للمؤشر
+        let closestIdx = 0;
+        let minDistance = Infinity;
+
+        cardElements.forEach((el, i) => {
+            const rect = el.getBoundingClientRect();
+            const center = rect.left + (rect.width / 2);
+            const dist = Math.abs(clientX - center);
+            if (dist < minDistance) {
+                minDistance = dist;
+                closestIdx = i;
+            }
+        });
+
+        return closestIdx;
+    }
+
     renderPlayerHand() {
         this.playerCardsRow.innerHTML = '';
         const localPlayer = this.rummy.getLocalPlayer();
+        if (!localPlayer) return;
 
         localPlayer.hand.forEach((card, idx) => {
             const cardEl = this.createCardElement(card);
@@ -819,33 +922,80 @@ class App {
             cardEl.addEventListener('dragstart', (e) => {
                 this.draggedCardIndex = idx;
                 cardEl.classList.add('dragging');
+                document.body.classList.add('dragging-card-active');
                 e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/plain', idx);
+                try {
+                    e.dataTransfer.setData('text/plain', String(idx));
+                } catch (_) {}
             });
 
             cardEl.addEventListener('dragend', () => {
                 cardEl.classList.remove('dragging');
+                document.body.classList.remove('dragging-card-active');
                 document.querySelectorAll('.card-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+                this.draggedCardIndex = null;
+                setTimeout(() => {
+                    this.justFinishedDrag = false;
+                }, 100);
             });
 
             cardEl.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 e.dataTransfer.dropEffect = 'move';
-                cardEl.classList.add('drag-over');
             });
 
-            cardEl.addEventListener('dragleave', () => {
-                cardEl.classList.remove('drag-over');
-            });
+            // دعم السحب باللمس للهواتف والأجهزة اللوحية
+            let touchStartX = 0;
+            let isTouchDragging = false;
 
-            cardEl.addEventListener('drop', (e) => {
-                e.preventDefault();
-                cardEl.classList.remove('drag-over');
-                const fromIdx = this.draggedCardIndex;
-                const toIdx = idx;
-                if (fromIdx !== undefined && fromIdx !== null && fromIdx !== toIdx) {
-                    this.rummy.moveCardInHand(this.rummy.mySeat, fromIdx, toIdx);
+            cardEl.addEventListener('touchstart', (e) => {
+                if (e.touches.length !== 1) return;
+                this.touchDragIndex = idx;
+                touchStartX = e.touches[0].clientX;
+                isTouchDragging = false;
+            }, { passive: true });
+
+            cardEl.addEventListener('touchmove', (e) => {
+                if (this.touchDragIndex === null || this.touchDragIndex === undefined) return;
+                const touch = e.touches[0];
+                const dx = Math.abs(touch.clientX - touchStartX);
+
+                if (dx > 8) {
+                    isTouchDragging = true;
+                    cardEl.classList.add('dragging');
+                    if (e.cancelable) e.preventDefault();
+
+                    const targetIdx = this.getHandDropIndex(touch.clientX);
+                    const cardEls = this.playerCardsRow.querySelectorAll('.card-item');
+                    cardEls.forEach((el, i) => {
+                        if (i === targetIdx) {
+                            el.classList.add('drag-over');
+                        } else {
+                            el.classList.remove('drag-over');
+                        }
+                    });
                 }
+            }, { passive: false });
+
+            cardEl.addEventListener('touchend', (e) => {
+                if (isTouchDragging && this.touchDragIndex !== null && this.touchDragIndex !== undefined) {
+                    this.justFinishedDrag = true;
+                    const touch = e.changedTouches[0];
+                    const targetIdx = this.getHandDropIndex(touch.clientX);
+                    const fromIdx = this.touchDragIndex;
+
+                    document.querySelectorAll('.card-item.drag-over').forEach(el => el.classList.remove('drag-over'));
+                    document.querySelectorAll('.card-item.dragging').forEach(el => el.classList.remove('dragging'));
+
+                    if (fromIdx !== targetIdx) {
+                        this.rummy.moveCardInHand(this.rummy.mySeat, fromIdx, targetIdx);
+                    }
+                    setTimeout(() => {
+                        this.justFinishedDrag = false;
+                    }, 100);
+                }
+                this.touchDragIndex = null;
+                isTouchDragging = false;
             });
 
             if (this.rummy.selectedHandIndices.has(idx)) {
@@ -855,6 +1005,10 @@ class App {
                 cardEl.style.marginLeft = '-30px';
             }
             cardEl.addEventListener('click', () => {
+                if (this.justFinishedDrag) {
+                    this.justFinishedDrag = false;
+                    return;
+                }
                 this.rummy.toggleCardSelection(idx);
             });
             this.playerCardsRow.appendChild(cardEl);
