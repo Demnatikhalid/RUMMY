@@ -1,0 +1,1826 @@
+/* ==========================================================================
+   لعبة الرومي المغربي والبلاك جاك - التصميم التكتيكي الاحترافي (Game HUD Theme)
+   مستوحى من واجهات الألعاب القتالية الحديثة (Tactical Military & Arcade Card Game)
+   ========================================================================== */
+
+:root {
+    --hud-bg-dark: #0a0e14;
+    --hud-panel-bg: rgba(14, 20, 27, 0.92);
+    --hud-panel-border: rgba(245, 158, 11, 0.35);
+    --hud-amber: #ff9900;
+    --hud-gold: #f59e0b;
+    --hud-gold-light: #fbbf24;
+    --hud-gold-glow: rgba(245, 158, 11, 0.6);
+    --hud-red-orange: #ea580c;
+    --arena-green-felt: radial-gradient(circle at 50% 50%, #175231 0%, #0d321d 60%, #06190e 100%);
+    --card-bg: #ffffff;
+    --card-border: #cbd5e1;
+    --font-tactical: 'Rajdhani', 'Teko', sans-serif;
+    --font-arabic: 'Cairo', sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+body.game-hud-theme {
+    direction: rtl;
+    font-family: var(--font-arabic);
+    background-color: var(--hud-bg-dark);
+    color: #f8fafc;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* خلفية تكتيكية ذات إضاءة سينمائية */
+.hud-background-glow {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 15%, rgba(245, 158, 11, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 80% 85%, rgba(16, 185, 129, 0.06) 0%, transparent 40%),
+        linear-gradient(180deg, #070a0e 0%, #0f161e 100%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ==========================================================================
+   الشريط العلوي (Game Top Bar)
+   ========================================================================== */
+.game-header {
+    position: relative;
+    z-index: 10;
+    background: linear-gradient(180deg, #0e141c 0%, rgba(14, 20, 28, 0.95) 100%);
+    border-bottom: 2px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 20px;
+}
+
+/* هوية اللاعب */
+.player-hud-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.player-avatar-wrapper {
+    position: relative;
+}
+
+.player-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid var(--hud-gold);
+    box-shadow: 0 0 10px var(--hud-gold-glow);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.6rem;
+}
+
+.player-lvl-badge {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    background: var(--hud-red-orange);
+    color: #fff;
+    font-family: var(--font-tactical);
+    font-weight: 700;
+    font-size: 0.7rem;
+    padding: 1px 4px;
+    border-radius: 4px;
+    border: 1px solid #fff;
+}
+
+.player-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.player-name {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #f8fafc;
+}
+
+.rank-title {
+    font-size: 0.75rem;
+    color: var(--hud-gold-light);
+    background: rgba(245, 158, 11, 0.15);
+    padding: 1px 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.player-exp-bar {
+    width: 140px;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 2px;
+}
+
+.player-exp-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--hud-amber) 0%, var(--hud-gold-light) 100%);
+    border-radius: 3px;
+    box-shadow: 0 0 6px var(--hud-amber);
+}
+
+/* العملات */
+.currencies-hud {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.currency-pill {
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 4px 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-tactical);
+    font-weight: 700;
+    font-size: 1.1rem;
+    box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.5);
+}
+
+.currency-pill.gold-coins {
+    border-color: rgba(245, 158, 11, 0.5);
+    color: var(--hud-gold-light);
+}
+
+.currency-pill.diamonds {
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #7dd3fc;
+}
+
+.quick-settings {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hud-square-btn {
+    width: 38px;
+    height: 38px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #f1f5f9;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.hud-square-btn:hover {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: var(--hud-gold);
+    transform: translateY(-2px);
+    box-shadow: 0 0 10px var(--hud-gold-glow);
+}
+
+/* ==========================================================================
+   المخطط العام للعبة: القائمة التكتيكية الجانبية + ساحة اللعب
+   ========================================================================== */
+.game-layout-container {
+    position: relative;
+    z-index: 5;
+    flex: 1;
+    display: flex;
+    padding: 12px;
+    gap: 14px;
+    min-height: calc(100vh - 70px);
+}
+
+/* القائمة التكتيكية الجانبية (مثل الصورة المرجعية) */
+.tactical-menu {
+    width: 250px;
+    background: var(--hud-panel-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
+    flex-shrink: 0;
+}
+
+.tactical-menu-header {
+    padding: 0 8px 4px 8px;
+}
+
+.menu-label {
+    font-family: var(--font-tactical);
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #94a3b8;
+}
+
+.menu-divider {
+    height: 2px;
+    background: linear-gradient(90deg, var(--hud-amber) 0%, transparent 100%);
+    margin-top: 4px;
+}
+
+/* أزرار القائمة التكتيكية بالتصميم الدقيق كما في صورة المستخدم */
+.tactical-tab-btn {
+    position: relative;
+    background: rgba(20, 27, 36, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: right;
+    overflow: hidden;
+    /* شكل مقطوع تكتيكي في الزوايا */
+    clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+}
+
+.tactical-tab-btn:hover {
+    background: rgba(30, 41, 56, 0.95);
+    border-color: rgba(245, 158, 11, 0.4);
+    transform: translateX(-4px);
+}
+
+.tactical-tab-btn.active {
+    background: linear-gradient(90deg, rgba(245, 158, 11, 0.22) 0%, rgba(20, 27, 36, 0.95) 100%);
+    border-right: 4px solid var(--hud-amber);
+    border-color: var(--hud-amber);
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.35);
+}
+
+.tab-icon-box {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    color: var(--hud-amber);
+    filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.5));
+}
+
+.tab-text-group {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.tab-en-title {
+    font-family: var(--font-tactical);
+    font-size: 1.15rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+    line-height: 1.1;
+    color: #ffffff;
+    text-transform: uppercase;
+}
+
+.tactical-tab-btn.active .tab-en-title {
+    color: var(--hud-amber);
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.6);
+}
+
+.tab-ar-subtitle {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    margin-top: 2px;
+}
+
+.tactical-tab-btn.active .tab-ar-subtitle {
+    color: #fde68a;
+}
+
+/* المعين البرتقالي التكتيكي (The Signature Orange Diamond Badge) */
+.tactical-diamond-badge {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    color: var(--hud-amber);
+    font-size: 0.75rem;
+    filter: drop-shadow(0 0 5px var(--hud-amber));
+    animation: diamond-pulse 2s infinite ease-in-out;
+}
+
+@keyframes diamond-pulse {
+    0%, 100% { transform: scale(1); opacity: 0.85; }
+    50% { transform: scale(1.25); opacity: 1; filter: drop-shadow(0 0 8px #ffaa00); }
+}
+
+.tactical-menu-spacer {
+    flex: 1;
+}
+
+.new-match-btn {
+    border-color: rgba(34, 197, 94, 0.3);
+}
+
+.new-match-btn .tab-icon-box {
+    color: #4ade80;
+    filter: drop-shadow(0 0 6px rgba(74, 222, 128, 0.5));
+}
+
+.new-match-btn:hover {
+    border-color: #22c55e;
+}
+
+.rules-tab-btn {
+    border-color: rgba(148, 163, 184, 0.2);
+}
+
+/* ==========================================================================
+   ساحة اللعب الرئيسية (Arena Surface)
+   ========================================================================== */
+.game-arena-surface {
+    flex: 1;
+    background: var(--arena-green-felt);
+    border: 3px solid #332115;
+    border-radius: 18px;
+    box-shadow: 
+        inset 0 0 90px rgba(0, 0, 0, 0.85),
+        0 12px 40px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(245, 158, 11, 0.2);
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* خط ضوئي نيون على حافة الطاولة */
+.game-arena-surface::before {
+    content: '';
+    position: absolute;
+    inset: 2px;
+    border-radius: 15px;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+    pointer-events: none;
+}
+
+/* شريط حالة الجولة التكتيكي */
+.arena-match-status-hud {
+    background: rgba(10, 15, 20, 0.85);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 10px;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 12px;
+}
+
+.live-turn-tag {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #ffffff;
+}
+
+.beacon-pulse {
+    width: 10px;
+    height: 10px;
+    background: var(--hud-amber);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--hud-amber);
+    animation: beacon 1.4s infinite;
+}
+
+@keyframes beacon {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 14px var(--hud-amber); }
+    100% { transform: scale(0.9); opacity: 0.6; }
+}
+
+.mode-capsule-badge {
+    background: linear-gradient(135deg, #7c2d12 0%, #b45309 100%);
+    padding: 4px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--hud-gold);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #fef3c7;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.badge-dot {
+    color: var(--hud-gold-light);
+    font-size: 0.75rem;
+}
+
+/* ==========================================================================
+   منطقة الخصم (AI Bot Arena HUD)
+   ========================================================================== */
+.opponent-battle-hud {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.ai-bot-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 4px 14px 4px 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.bot-avatar-frame {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 2px solid #ef4444;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.5);
+}
+
+.bot-info-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.bot-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #f1f5f9;
+}
+
+.card-count-pill {
+    background: #334155;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-family: var(--font-tactical);
+    font-size: 0.8rem;
+    color: #e2e8f0;
+}
+
+.bot-readiness-pill {
+    font-size: 0.75rem;
+    color: var(--hud-gold-light);
+    font-weight: 700;
+}
+
+.cards-fan-ai {
+    display: flex;
+    justify-content: center;
+    height: 65px;
+    width: 100%;
+    max-width: 520px;
+}
+
+/* ==========================================================================
+   وسط الطاولة: الرزم المركزية وساحة التشكيلات
+   ========================================================================== */
+.table-center-arena {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 14px;
+    min-height: 200px;
+    margin: 8px 0;
+}
+
+/* رزمة السحب والمرميات */
+.tactical-deck-zone {
+    background: rgba(10, 15, 20, 0.6);
+    border: 1px dashed rgba(245, 158, 11, 0.35);
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.deck-cards-pair {
+    display: flex;
+    gap: 14px;
+}
+
+.deck-interactive-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.deck-title-hud {
+    font-family: var(--font-tactical);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.deck-pile-3d {
+    width: 72px;
+    height: 102px;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 
+        0 6px 14px rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.deck-pile-3d:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 
+        0 12px 20px rgba(0, 0, 0, 0.75),
+        0 0 12px var(--hud-gold-glow);
+}
+
+.stock-3d {
+    background: repeating-linear-gradient(45deg, #1e3a8a, #1e3a8a 8px, #172554 8px, #172554 16px);
+    border: 2px solid #93c5fd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.deck-count-badge {
+    position: absolute;
+    bottom: 6px;
+    background: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    font-family: var(--font-tactical);
+    font-weight: 700;
+    font-size: 0.85rem;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--hud-gold);
+}
+
+.discard-3d {
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.hud-action-mini-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #e2e8f0;
+    font-size: 0.72rem;
+    padding: 3px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.15s;
+}
+
+.hud-action-mini-btn:hover {
+    background: rgba(245, 158, 11, 0.25);
+    border-color: var(--hud-gold);
+    color: #fff;
+}
+
+/* ساحة التشكيلات المطروحة */
+.table-melds-arena {
+    background: rgba(10, 16, 22, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    overflow-y: auto;
+    max-height: 230px;
+    box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
+}
+
+.melds-arena-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 4px;
+}
+
+.arena-title {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--hud-gold-light);
+}
+
+.arena-subtitle {
+    font-family: var(--font-tactical);
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-right: 8px;
+}
+
+.arena-hint {
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+.melds-flow-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.meld-group {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(245, 158, 11, 0.5);
+    border-radius: 8px;
+    padding: 6px 8px;
+    display: flex;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.meld-tag {
+    position: absolute;
+    top: -8px;
+    right: 8px;
+    background: var(--hud-red-orange);
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 1px 6px;
+    border-radius: 6px;
+    border: 1px solid #fff;
+}
+
+.meld-layoff-btn {
+    position: absolute;
+    bottom: -8px;
+    left: 8px;
+    background: #0284c7;
+    color: #fff;
+    border: 1px solid #7dd3fc;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    cursor: pointer;
+    box-shadow: 0 0 6px rgba(2, 132, 199, 0.6);
+}
+
+.meld-layoff-btn:hover {
+    background: #0369a1;
+}
+
+/* ==========================================================================
+   منصة التجهيز والنزول التكتيكية (Meld Combiner HUD)
+   ========================================================================== */
+.tactical-staging-console {
+    background: rgba(14, 20, 27, 0.9);
+    border: 2px solid var(--hud-amber);
+    border-radius: 14px;
+    padding: 10px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: 
+        0 0 20px rgba(245, 158, 11, 0.25),
+        inset 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+.staging-console-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.staging-left-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.console-indicator-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--hud-amber);
+    box-shadow: 0 0 8px var(--hud-amber);
+    animation: beacon 1.5s infinite;
+}
+
+.console-title-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.console-main-title {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--hud-gold-light);
+}
+
+.console-sub-title {
+    font-family: var(--font-tactical);
+    font-size: 0.72rem;
+    color: #94a3b8;
+    letter-spacing: 0.5px;
+}
+
+/* شريط التقدم نحو 71 نقطة */
+.staging-meter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.points-progress-container {
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.points-text-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.staging-score-val {
+    font-family: var(--font-tactical);
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--hud-gold-light);
+}
+
+.staging-status-tag {
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+.points-progress-track {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.points-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #f59e0b 0%, #22c55e 100%);
+    box-shadow: 0 0 8px var(--hud-amber);
+    transition: width 0.3s ease;
+}
+
+.staged-melds-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    min-height: 80px;
+    align-items: center;
+}
+
+.staged-group-item {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    padding: 6px;
+    position: relative;
+    display: flex;
+}
+
+.unstage-btn {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.8);
+}
+
+/* ==========================================================================
+   منطقة اللاعب والكروت (Player Battle Zone)
+   ========================================================================== */
+.player-battle-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-cards-flow {
+    display: flex;
+    justify-content: center;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 14px 6px 18px 6px;
+    width: 100%;
+    max-width: 980px;
+}
+
+/* أزرار الأوامر التكتيكية (Tactical Game Buttons) */
+.hud-action-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: rgba(10, 15, 20, 0.75);
+    padding: 8px 18px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.tactical-game-btn {
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-family: var(--font-arabic);
+    font-weight: 700;
+    font-size: 0.88rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.18s ease;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+.tactical-game-btn:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    filter: grayscale(1);
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, var(--hud-amber) 0%, #b45309 100%);
+    color: #1a0f00;
+    border: 1px solid #fde68a;
+}
+
+.btn-gold:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px var(--hud-gold-glow);
+}
+
+.btn-deploy {
+    background: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+    color: #ffffff;
+    border: 1px solid #86efac;
+}
+
+.btn-deploy:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.6);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+    color: #ffffff;
+    border: 1px solid #fca5a5;
+}
+
+.btn-danger:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.6);
+}
+
+.btn-tool {
+    background: rgba(255, 255, 255, 0.12);
+    color: #f1f5f9;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.btn-tool:not(:disabled):hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: #fff;
+}
+
+.btn-neutral {
+    background: rgba(30, 41, 59, 0.85);
+    color: #cbd5e1;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-cancel {
+    background: rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+/* شريط أحداث الجولة السريع */
+.tactical-event-ticker {
+    width: 100%;
+    max-height: 40px;
+    overflow-y: auto;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 6px;
+    padding: 4px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   تصميم كروت اللعب (Cards Styling)
+   ========================================================================== */
+.card-item {
+    width: 66px;
+    height: 96px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    border: 1px solid var(--card-border);
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0.2, 1), box-shadow 0.2s;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 4px;
+    font-weight: 800;
+}
+
+.card-item:hover {
+    transform: translateY(-8px);
+}
+
+.card-item.selected {
+    transform: translateY(-20px) !important;
+    border: 2px solid var(--hud-amber) !important;
+    box-shadow: 
+        0 0 18px var(--hud-amber),
+        0 10px 20px rgba(0, 0, 0, 0.6) !important;
+}
+
+.card-item.dragging {
+    opacity: 0.45;
+    transform: scale(0.92);
+    cursor: grabbing;
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.4);
+}
+
+.card-item.drag-over {
+    border-right: 4px solid var(--hud-amber) !important;
+    transform: translateX(-12px);
+}
+
+.card-item.red {
+    color: #dc2626;
+}
+
+.card-item.black {
+    color: #0f172a;
+}
+
+.card-item.joker {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border: 2px solid #a855f7;
+    color: #7e22ce;
+}
+
+.card-corner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+}
+
+.card-rank {
+    font-family: var(--font-tactical);
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.card-suit {
+    font-size: 0.95rem;
+}
+
+.card-center {
+    align-self: center;
+    font-size: 1.6rem;
+    line-height: 1;
+}
+
+.card-back {
+    background: repeating-linear-gradient(45deg, #7f1d1d, #7f1d1d 8px, #991b1b 8px, #991b1b 16px);
+    border: 2px solid #fecaca;
+    width: 60px;
+    height: 85px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+/* ==========================================================================
+   كازينو بلاك جاك (Blackjack Arena Styling)
+   ========================================================================== */
+.blackjack-arena-table {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    align-items: center;
+    padding: 8px;
+}
+
+.dealer-battle-spot, .player-battle-spot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.casino-player-tag {
+    background: rgba(10, 15, 20, 0.85);
+    border: 1px solid var(--hud-amber);
+    padding: 4px 16px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.casino-tag-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.casino-score-badge {
+    font-family: var(--font-tactical);
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--hud-gold-light);
+}
+
+.bj-cards-table-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    min-height: 100px;
+}
+
+.casino-table-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.casino-announcement-box {
+    background: rgba(0, 0, 0, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 6px 20px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--hud-gold-light);
+    text-align: center;
+    min-height: 32px;
+}
+
+.active-bet-chip-pod {
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid var(--hud-amber);
+    border-radius: 20px;
+    padding: 6px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 0 16px var(--hud-gold-glow);
+}
+
+.chip-pod-label {
+    font-size: 0.72rem;
+    color: #94a3b8;
+}
+
+.chip-pod-amount {
+    font-family: var(--font-tactical);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--hud-gold-light);
+}
+
+.casino-betting-rack-hud {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.wallet-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.wallet-txt {
+    color: #fef08a;
+    font-size: 1rem;
+}
+
+.chips-tactical-rack {
+    display: flex;
+    gap: 14px;
+    background: rgba(10, 15, 20, 0.7);
+    padding: 8px 20px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.game-chip-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 3px dashed rgba(255, 255, 255, 0.85);
+    color: #ffffff;
+    font-family: var(--font-tactical);
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+    transition: transform 0.18s, box-shadow 0.18s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game-chip-btn:hover {
+    transform: scale(1.15) translateY(-4px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.75);
+}
+
+.chip-10 { background: radial-gradient(circle, #3b82f6, #1d4ed8); }
+.chip-25 { background: radial-gradient(circle, #22c55e, #15803d); }
+.chip-50 { background: radial-gradient(circle, #eab308, #ca8a04); }
+.chip-100 { background: radial-gradient(circle, #ef4444, #b91c1c); }
+.chip-500 { background: radial-gradient(circle, #8b5cf6, #6d28d9); }
+
+/* ==========================================================================
+   النافذة المنبثقة التكتيكية (Modal Rules)
+   ========================================================================== */
+.tactical-modal-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 12, 0.82);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.tactical-modal-backdrop.active {
+    display: flex;
+}
+
+.tactical-modal-window {
+    background: #0f161e;
+    border: 2px solid var(--hud-amber);
+    border-radius: 14px;
+    max-width: 680px;
+    width: 100%;
+    max-height: 85vh;
+    box-shadow: 
+        0 20px 50px rgba(0, 0, 0, 0.85),
+        0 0 25px rgba(245, 158, 11, 0.35);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.modal-top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    background: rgba(20, 28, 38, 0.95);
+    border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.modal-title-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.modal-badge-diamond {
+    color: var(--hud-amber);
+    font-size: 1rem;
+}
+
+.modal-top-bar h2 {
+    font-size: 1.25rem;
+    color: var(--hud-gold-light);
+    font-weight: 800;
+}
+
+.modal-close-icon {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.6rem;
+    cursor: pointer;
+}
+
+.modal-close-icon:hover {
+    color: #ffffff;
+}
+
+.modal-scroll-content {
+    padding: 20px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.rule-section-card {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    padding: 14px;
+}
+
+.rule-section-card.highlight-card {
+    border-color: var(--hud-amber);
+    background: rgba(245, 158, 11, 0.08);
+}
+
+.rule-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.rule-card-header h3 {
+    color: var(--hud-gold);
+    font-size: 1.05rem;
+    font-weight: 800;
+}
+
+.rule-list {
+    margin-right: 20px;
+    line-height: 1.8;
+    font-size: 0.9rem;
+    color: #e2e8f0;
+}
+
+/* ==========================================================================
+   طاولة الرومي الرباعية (4-Player Table Layout) كما في الصورة المرجعية
+   ========================================================================== */
+.party-highlight-btn {
+    border-color: rgba(34, 197, 94, 0.4);
+    background: linear-gradient(90deg, rgba(34, 197, 94, 0.15) 0%, rgba(20, 27, 36, 0.95) 100%);
+}
+
+.party-highlight-btn .tab-icon-box {
+    color: #4ade80;
+    filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.6));
+}
+
+.rummy-four-player-table {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    position: relative;
+    gap: 8px;
+}
+
+/* لوحة النتائج المباشرة في الركن العلوي (مثل ClubDeJeux في صورة المستخدم) */
+.table-scoreboard-box {
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    background: rgba(10, 15, 20, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    padding: 6px 12px;
+    min-width: 140px;
+    z-index: 20;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.scoreboard-title {
+    font-family: var(--font-tactical);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--hud-gold-light);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 2px;
+    margin-bottom: 4px;
+}
+
+.scoreboard-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    padding: 2px 0;
+    color: #cbd5e1;
+}
+
+.scoreboard-row.active-turn {
+    color: #fde047;
+    font-weight: 800;
+}
+
+.scoreboard-row.active-turn::before {
+    content: '▶';
+    font-size: 0.6rem;
+    color: var(--hud-amber);
+    margin-left: 4px;
+}
+
+/* مقاعد اللاعبين المحيطية (North, West, East) */
+.player-seat-pod {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    z-index: 10;
+    transition: all 0.25s ease;
+}
+
+.player-seat-pod.active-turn {
+    transform: scale(1.05);
+}
+
+.player-seat-pod.active-turn .seat-avatar-frame {
+    border-color: var(--hud-gold);
+    box-shadow: 0 0 16px var(--hud-gold-glow);
+}
+
+.player-seat-pod.active-turn .seat-active-beacon {
+    display: block;
+}
+
+.seat-avatar-frame {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #1e293b;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.seat-active-beacon {
+    display: none;
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #22c55e;
+    border: 2px solid #fff;
+    box-shadow: 0 0 8px #22c55e;
+    animation: beacon 1.2s infinite;
+}
+
+.seat-info-tag {
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+.seat-player-name {
+    font-weight: 700;
+    font-size: 0.8rem;
+    color: #f8fafc;
+}
+
+.seat-cards-badge {
+    font-family: var(--font-tactical);
+    font-size: 0.72rem;
+    color: var(--hud-gold-light);
+}
+
+/* المقعد العلوي (North) */
+.seat-north {
+    align-self: center;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cards-fan-horizontal {
+    display: flex;
+    justify-content: center;
+    height: 55px;
+    max-width: 420px;
+}
+
+.cards-fan-horizontal .card-back {
+    margin-left: -32px;
+    width: 50px;
+    height: 70px;
+}
+
+.cards-fan-horizontal .card-back:first-child {
+    margin-left: 0;
+}
+
+/* الصف الأوسط (West + Center Felt + East) */
+.table-middle-row {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    min-height: 200px;
+}
+
+/* المقعد الأيسر (West) */
+.seat-west {
+    flex-direction: column;
+    width: 90px;
+}
+
+/* المقعد الأيمن (East) */
+.seat-east {
+    flex-direction: column;
+    width: 90px;
+}
+
+.cards-fan-vertical {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 120px;
+    width: 70px;
+    overflow: hidden;
+}
+
+.cards-fan-vertical .card-back {
+    margin-top: -55px;
+    width: 55px;
+    height: 75px;
+    transform: rotate(90deg);
+}
+
+.cards-fan-vertical .card-back:first-child {
+    margin-top: 0;
+}
+
+/* قلب الطاولة الأخضر المفرغ (Felt Center) */
+.table-felt-center {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px;
+    background: rgba(10, 20, 15, 0.65);
+    border: 2px dashed rgba(245, 158, 11, 0.25);
+    border-radius: 16px;
+    padding: 10px;
+    height: 100%;
+    min-height: 220px;
+}
+
+/* رزمتا السحب والمرميات (Défausse & Pioche) */
+.felt-piles-corner {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.felt-pile-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.felt-pile-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+/* ساحة التشكيلات في الوسط */
+.felt-melds-container {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow-y: auto;
+    max-height: 220px;
+}
+
+.felt-melds-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--hud-gold-light);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 2px;
+}
+
+.felt-melds-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+/* المقعد السفلي (South) */
+.player-south-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ==========================================================================
+   نافذة اللعب الجماعي بكود الغرفة (Party Room Modal Styles)
+   ========================================================================== */
+.party-modal-window {
+    max-width: 580px;
+}
+
+.party-modal-body {
+    padding: 18px 24px;
+}
+
+.party-tab-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.party-tab-option {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    padding: 8px 12px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.party-tab-option.active {
+    background: var(--hud-amber);
+    color: #000;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
+}
+
+.party-panel {
+    display: none;
+    flex-direction: column;
+}
+
+.party-panel.active {
+    display: flex;
+}
+
+.party-setup-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.party-setup-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.party-setup-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.party-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+.party-input, .party-select {
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #ffffff;
+    font-family: var(--font-arabic);
+    font-size: 0.95rem;
+    outline: none;
+}
+
+.party-input:focus, .party-select:focus {
+    border-color: var(--hud-gold-light);
+    box-shadow: 0 0 10px var(--hud-gold-glow);
+}
+
+.party-input.uppercase {
+    text-transform: uppercase;
+    font-family: var(--font-tactical);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+/* تذكرة كود الغرفة */
+.party-lobby-box {
+    margin-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 14px;
+}
+
+.room-code-ticket {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(0, 0, 0, 0.8) 100%);
+    border: 2px dashed var(--hud-amber);
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+.ticket-sub {
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+.ticket-code-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ticket-code {
+    font-family: var(--font-tactical);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--hud-gold-light);
+    letter-spacing: 2px;
+    text-shadow: 0 0 12px var(--hud-gold-glow);
+}
+
+.ticket-hint {
+    font-size: 0.75rem;
+    color: #86efac;
+}
+
+/* شبكة مقاعد اللاعبين في الغرفة */
+.party-slots-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.party-slot-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.party-slot-card.occupied {
+    border-color: rgba(34, 197, 94, 0.5);
+    background: rgba(34, 197, 94, 0.08);
+}
+
+.party-slot-card.host-slot {
+    border-color: var(--hud-amber);
+}
+
+.slot-avatar {
+    font-size: 1.3rem;
+}
+
+.slot-details {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.slot-name {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #f8fafc;
+}
+
+.slot-status {
+    font-size: 0.7rem;
+    color: #94a3b8;
+}
+
+.party-slot-card.occupied .slot-status {
+    color: #86efac;
+}
+
+/* ==========================================================================
+   التوافق مع الشاشات المختلفة
+   ========================================================================== */
+@media (max-width: 900px) {
+    .game-layout-container {
+        flex-direction: column;
+    }
+    .tactical-menu {
+        width: 100%;
+        flex-direction: row;
+        overflow-x: auto;
+    }
+    .table-felt-center {
+        grid-template-columns: 1fr;
+    }
+    .card-item {
+        width: 52px;
+        height: 78px;
+    }
+}
+

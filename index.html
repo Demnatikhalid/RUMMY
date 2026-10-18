@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرومي المغربي والبلاك جاك | Moroccan Rummy & Blackjack</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Rajdhani:wght@600;700&family=Teko:wght@600;700&display=swap" rel="stylesheet">
+    <!-- مكتبة PeerJS للاتصال المباشر بين اللاعبين P2P عبر الإنترنت بدون سيرفر -->
+    <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+</head>
+<body class="game-hud-theme">
+
+    <div class="hud-background-glow"></div>
+
+    <!-- الشريط العلوي التكتيكي (Game Top Bar) -->
+    <header class="game-header">
+        <div class="player-hud-card">
+            <div class="player-avatar-wrapper">
+                <div id="local-player-avatar" class="player-avatar">🂡</div>
+                <div class="player-lvl-badge">LV.48</div>
+            </div>
+            <div class="player-meta">
+                <div class="player-name">
+                    <span id="local-player-name">المحترف المغربي</span>
+                    <span class="rank-title">👑 أسطورة الرومي</span>
+                </div>
+                <div class="player-exp-bar">
+                    <div class="player-exp-fill" style="width: 78%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="currencies-hud">
+            <div class="currency-pill gold-coins">
+                <span class="curr-icon">🪙</span>
+                <span class="curr-val" id="hud-coins">24,500</span>
+            </div>
+            <div class="currency-pill diamonds">
+                <span class="curr-icon">💎</span>
+                <span class="curr-val" id="hud-gems">380</span>
+            </div>
+        </div>
+
+        <div class="quick-settings">
+            <button id="btn-sound" class="hud-square-btn" title="تشغيل / كتم المؤثرات الصوتية">
+                <span class="sound-icon">🔊</span>
+            </button>
+            <button id="btn-rules" class="hud-square-btn" title="دليل القواعد والشرح">
+                <span>📖</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- المخطط العام: القائمة التكتيكية + ساحة اللعب -->
+    <div class="game-layout-container">
+
+        <!-- القائمة التكتيكية الجانبية -->
+        <aside class="tactical-menu">
+            <div class="tactical-menu-header">
+                <span class="menu-label">MODES • أنماط اللعب</span>
+                <div class="menu-divider"></div>
+            </div>
+
+            <!-- زر اللعب الجماعي بكود الغرفة (Party Code) كما طلب المستخدم -->
+            <button id="tab-party" class="tactical-tab-btn party-highlight-btn">
+                <div class="tab-icon-box">
+                    <span class="tab-icon">👥</span>
+                </div>
+                <div class="tab-text-group">
+                    <span class="tab-en-title">PARTY ROOM</span>
+                    <span class="tab-ar-subtitle">غرفة الأصدقاء (كود خاص)</span>
+                </div>
+                <div class="tactical-diamond-badge">◆</div>
+            </button>
+
+            <!-- أزرار الأنماط الفردية -->
+            <button id="tab-sambel" class="tactical-tab-btn active" data-mode="sambel">
+                <div class="tab-icon-box">
+                    <span class="tab-icon">🂠</span>
+                </div>
+                <div class="tab-text-group">
+                    <span class="tab-en-title">SAMBEL MODE</span>
+                    <span class="tab-ar-subtitle">الرومي: السامبل (13 ورقة)</span>
+                </div>
+                <div class="tactical-diamond-badge">◆</div>
+            </button>
+
+            <button id="tab-tallaj" class="tactical-tab-btn" data-mode="tallaj">
+                <div class="tab-icon-box">
+                    <span class="tab-icon">⭐</span>
+                </div>
+                <div class="tab-text-group">
+                    <span class="tab-en-title">TALLAJ 71</span>
+                    <span class="tab-ar-subtitle">الرومي: الطالّاج (14 ورقة)</span>
+                </div>
+                <div class="tactical-diamond-badge">◆</div>
+            </button>
+
+            <button id="tab-blackjack" class="tactical-tab-btn" data-mode="blackjack">
+                <div class="tab-icon-box">
+                    <span class="tab-icon">♠</span>
+                </div>
+                <div class="tab-text-group">
+                    <span class="tab-en-title">BLACKJACK 21</span>
+                    <span class="tab-ar-subtitle">كازينو التحدي ضد البنك</span>
+                </div>
+                <div class="tactical-diamond-badge">◆</div>
+            </button>
+
+            <div class="tactical-menu-spacer"></div>
+
+            <button id="btn-side-new-game" class="tactical-tab-btn new-match-btn">
+                <div class="tab-icon-box">
+                    <span class="tab-icon">🔄</span>
+                </div>
+                <div class="tab-text-group">
+                    <span class="tab-en-title">NEW MATCH</span>
+                    <span class="tab-ar-subtitle">بدء جولة جديدة</span>
+                </div>
+            </button>
+
+            <button id="btn-side-rules" class="tactical-tab-btn rules-tab-btn">
+                <div class="tab-icon-box">
+                    <span class="tab-icon">📜</span>
+                </div>
+                <div class="tab-text-group">
+                    <span class="tab-en-title">RULE BOOK</span>
+                    <span class="tab-ar-subtitle">دليل القواعد المغربية</span>
+                </div>
+            </button>
+        </aside>
+
+        <!-- ساحة اللعب الرئيسية (Arena Surface) -->
+        <main class="game-arena-surface">
+
+            <!-- شريط حالة الجولة والإشعارات التكتيكية -->
+            <div class="arena-match-status-hud">
+                <div class="live-turn-tag">
+                    <span class="beacon-pulse"></span>
+                    <span id="status-text">دورك الآن: اسحب ورقة من الرزمة أو المرميات.</span>
+                </div>
+                <div class="hud-top-badges">
+                    <div id="room-code-badge" class="mode-capsule-badge" style="display: none; background: #0369a1; border-color: #38bdf8;">
+                        <span class="badge-dot">🔑</span>
+                        <span id="room-code-display" class="badge-txt">غرفة: RAMI-0000</span>
+                    </div>
+                    <div id="mode-badge" class="mode-capsule-badge">
+                        <span class="badge-dot">◆</span>
+                        <span class="badge-txt">وضع السامبل</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 1. واجهة طاولة الرومي لـ 2 إلى 4 لاعبين (كما في الصورة المرجعية) -->
+            <div id="rummy-view" class="game-view active">
+                <div class="rummy-four-player-table">
+
+                    <!-- لوحة النتائج المباشرة في أعلى اليسار (مثل ClubDeJeux في الصورة) -->
+                    <div class="table-scoreboard-box">
+                        <div class="scoreboard-title">لوحة النقاط • PLAYERS</div>
+                        <div id="scoreboard-list" class="scoreboard-entries"></div>
+                    </div>
+
+                    <!-- مقعد اللاعب العلوي (Player North - Top) -->
+                    <div id="seat-top" class="player-seat-pod seat-north">
+                        <div class="seat-avatar-frame">
+                            <span class="seat-avatar-icon">🧑</span>
+                            <span class="seat-active-beacon"></span>
+                        </div>
+                        <div class="seat-info-tag">
+                            <span class="seat-player-name">كريم</span>
+                            <span class="seat-cards-badge">13 ورقة</span>
+                        </div>
+                        <div class="cards-fan-horizontal"></div>
+                    </div>
+
+                    <!-- منتصف الطاولة: يجمع اللاعب الأيسر والساحة واللاعب الأيمن -->
+                    <div class="table-middle-row">
+
+                        <!-- مقعد اللاعب الأيسر (Player West - Left) -->
+                        <div id="seat-left" class="player-seat-pod seat-west">
+                            <div class="seat-avatar-frame">
+                                <span class="seat-avatar-icon">👩</span>
+                                <span class="seat-active-beacon"></span>
+                            </div>
+                            <div class="seat-info-tag">
+                                <span class="seat-player-name">فاطمة</span>
+                                <span class="seat-cards-badge">13 ورقة</span>
+                            </div>
+                            <div class="cards-fan-vertical"></div>
+                        </div>
+
+                        <!-- ساحة التشكيلات ورزمتا السحب والمرميات في الوسط -->
+                        <div class="table-felt-center">
+                            
+                            <!-- رزمة السحب والمرميات (Défausse & Pioche) -->
+                            <div class="felt-piles-corner">
+                                <!-- رزمة السحب -->
+                                <div class="felt-pile-wrapper">
+                                    <span class="felt-pile-label">الرزمة (Pioche)</span>
+                                    <div id="stock-pile" class="deck-pile-3d stock-3d" title="انقر لسحب ورقة">
+                                        <div class="deck-top-layer">
+                                            <div class="deck-poker-pattern"></div>
+                                            <span id="stock-count" class="deck-count-badge">78</span>
+                                        </div>
+                                    </div>
+                                    <button id="btn-draw-stock" class="hud-action-mini-btn">سحب</button>
+                                </div>
+
+                                <!-- رزمة المرميات -->
+                                <div class="felt-pile-wrapper">
+                                    <span class="felt-pile-label">المرميات (Défausse)</span>
+                                    <div id="discard-pile" class="deck-pile-3d discard-3d" title="انقر لسحب المرمية"></div>
+                                    <button id="btn-draw-discard" class="hud-action-mini-btn">أخذ</button>
+                                </div>
+                            </div>
+
+                            <!-- ساحة التشكيلات المطروحة على الطاولة -->
+                            <div class="felt-melds-container">
+                                <div class="felt-melds-header">
+                                    <span>التشكيلات المطروحة (Runs & Sets)</span>
+                                    <span style="font-size: 0.72rem; color: #94a3b8;">يمكن التركيب بعد النزول</span>
+                                </div>
+                                <div id="melds-grid" class="felt-melds-grid"></div>
+                            </div>
+
+                        </div>
+
+                        <!-- مقعد اللاعب الأيمن (Player East - Right) -->
+                        <div id="seat-right" class="player-seat-pod seat-east">
+                            <div class="seat-avatar-frame">
+                                <span class="seat-avatar-icon">👱‍♀️</span>
+                                <span class="seat-active-beacon"></span>
+                            </div>
+                            <div class="seat-info-tag">
+                                <span class="seat-player-name">سناء</span>
+                                <span class="seat-cards-badge">13 ورقة</span>
+                            </div>
+                            <div class="cards-fan-vertical"></div>
+                        </div>
+
+                    </div>
+
+                    <!-- منصة تجهيز النزول (Staging Console) -->
+                    <div id="staging-area" class="tactical-staging-console">
+                        <div class="staging-console-top">
+                            <div class="staging-left-info">
+                                <div class="console-indicator-dot"></div>
+                                <div class="console-title-wrap">
+                                    <span id="staging-title" class="console-main-title">منصة تجهيز النزول</span>
+                                    <span class="console-sub-title">COMBINER CONSOLE • TALLAJ / SAMBEL</span>
+                                </div>
+                            </div>
+
+                            <div class="staging-meter-group">
+                                <div class="points-progress-container">
+                                    <div class="points-text-row">
+                                        <span id="staging-score-badge" class="staging-score-val">0 / 71 نقطة</span>
+                                        <span id="staging-status-label" class="staging-status-tag">في انتظار التجهيز</span>
+                                    </div>
+                                    <div class="points-progress-track">
+                                        <div id="staging-progress-fill" class="points-progress-fill" style="width: 0%;"></div>
+                                    </div>
+                                </div>
+
+                                <button id="btn-commit-melds" class="tactical-game-btn btn-deploy" disabled>
+                                    <span>🏆</span>
+                                    <span>طرح الكل والخروج (WIN)</span>
+                                </button>
+                                <button id="btn-cancel-staged" class="tactical-game-btn btn-cancel" disabled>
+                                    <span>✕</span>
+                                    <span>إلغاء</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="staging-groups" class="staged-melds-container"></div>
+                    </div>
+
+                    <!-- مقعد اللاعب الحالي (Player South - Bottom) -->
+                    <div class="player-south-zone">
+                        <div id="player-cards-row" class="player-cards-flow"></div>
+
+                        <div class="hud-action-bar">
+                            <button id="btn-move-left" class="tactical-game-btn btn-tool" title="تحريك الورقة المحددة لليسار" disabled>
+                                <span>◀</span>
+                                <span>تحريك</span>
+                            </button>
+                            <button id="btn-move-right" class="tactical-game-btn btn-tool" title="تحريك الورقة المحددة لليمين" disabled>
+                                <span>تحريك</span>
+                                <span>▶</span>
+                            </button>
+                            <button id="btn-sort-suit" class="tactical-game-btn btn-tool" title="ترتيب الأوراق حسب اللون">
+                                <span>🎨</span>
+                                <span>فرز باللون</span>
+                            </button>
+                            <button id="btn-sort-rank" class="tactical-game-btn btn-tool" title="ترتيب الأوراق تصاعدياً">
+                                <span>🔢</span>
+                                <span>فرز بالرقم</span>
+                            </button>
+                            <button id="btn-stage-meld" class="tactical-game-btn btn-gold" disabled>
+                                <span>➕</span>
+                                <span>تجهيز التشكيلة (3+)</span>
+                            </button>
+                            <button id="btn-discard" class="tactical-game-btn btn-danger" disabled>
+                                <span>🗑️</span>
+                                <span>رمي الورقة وإنهاء الدور</span>
+                            </button>
+                            <button id="btn-new-rummy" class="tactical-game-btn btn-neutral">
+                                <span>🔄</span>
+                                <span>إعادة توزيع</span>
+                            </button>
+                        </div>
+
+                        <div id="game-logs" class="tactical-event-ticker"></div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 2. واجهة كازينو بلاك جاك -->
+            <div id="blackjack-view" class="game-view">
+                <div class="blackjack-arena-table">
+                    
+                    <div class="dealer-battle-spot">
+                        <div class="casino-player-tag">
+                            <span class="casino-tag-title">الموزع (البنك - CASINO DEALER)</span>
+                            <span id="bj-dealer-score" class="casino-score-badge">المجموع: 0</span>
+                        </div>
+                        <div id="bj-dealer-cards" class="bj-cards-table-container"></div>
+                    </div>
+
+                    <div class="casino-table-center">
+                        <div id="bj-status-message" class="casino-announcement-box">
+                            حدد رهانك من الفيشات بالأسفل واضغط على "توزيع" لبدء الجولة
+                        </div>
+                        <div class="active-bet-chip-pod">
+                            <span class="chip-pod-label">الرهان الإجمالي</span>
+                            <span id="bj-current-bet" class="chip-pod-amount">0 فيشة</span>
+                        </div>
+                    </div>
+
+                    <div class="player-battle-spot">
+                        <div id="bj-player-cards" class="bj-cards-table-container"></div>
+                        <div class="casino-player-tag">
+                            <span class="casino-tag-title">يدك (PLAYER)</span>
+                            <span id="bj-player-score" class="casino-score-badge">المجموع: 0</span>
+                        </div>
+                    </div>
+
+                    <div class="casino-betting-rack-hud">
+                        <div class="wallet-status-bar">
+                            <span class="wallet-txt">💰 رصيد المحفظة: <strong id="bj-wallet-balance">1000 فيشة</strong></span>
+                            <button id="btn-bj-reset-wallet" class="tactical-game-btn btn-tool" style="padding: 4px 12px; font-size: 0.8rem;">إعادة شحن الرصيد</button>
+                        </div>
+
+                        <div class="chips-tactical-rack">
+                            <button class="game-chip-btn chip-10" data-amount="10"><span class="chip-inner-ring">10</span></button>
+                            <button class="game-chip-btn chip-25" data-amount="25"><span class="chip-inner-ring">25</span></button>
+                            <button class="game-chip-btn chip-50" data-amount="50"><span class="chip-inner-ring">50</span></button>
+                            <button class="game-chip-btn chip-100" data-amount="100"><span class="chip-inner-ring">100</span></button>
+                            <button class="game-chip-btn chip-500" data-amount="500"><span class="chip-inner-ring">500</span></button>
+                        </div>
+
+                        <div class="hud-action-bar">
+                            <button id="btn-bj-clear" class="tactical-game-btn btn-neutral">مسح الرهان</button>
+                            <button id="btn-bj-deal" class="tactical-game-btn btn-gold">🃏 توزيع (DEAL)</button>
+                            <button id="btn-bj-hit" class="tactical-game-btn btn-deploy" disabled>➕ سحب (HIT)</button>
+                            <button id="btn-bj-stand" class="tactical-game-btn btn-danger" disabled>✋ وقوف (STAND)</button>
+                            <button id="btn-bj-double" class="tactical-game-btn btn-gold" disabled>⚡ مضاعفة (DOUBLE)</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- نافذة اللعب الجماعي بكود الغرفة (Party Room Modal) -->
+    <div id="party-modal" class="tactical-modal-backdrop">
+        <div class="tactical-modal-window party-modal-window">
+            <div class="modal-top-bar">
+                <div class="modal-title-group">
+                    <span class="modal-badge-diamond">👥</span>
+                    <h2>غرفة اللعب الجماعي مع الأصدقاء (PARTY ROOM)</h2>
+                </div>
+                <button id="btn-close-party" class="modal-close-icon">&times;</button>
+            </div>
+
+            <div class="party-modal-body">
+                <!-- أزرار التبويب داخل الغرفة -->
+                <div class="party-tab-selector">
+                    <button id="btn-tab-create-room" class="party-tab-option active">إنشاء غرفة جديدة (Host)</button>
+                    <button id="btn-tab-join-room" class="party-tab-option">انضمام بكود الغرفة (Join)</button>
+                </div>
+
+                <!-- 1. لوحة إنشاء الغرفة -->
+                <div id="panel-create-room" class="party-panel active">
+                    <div class="party-setup-group">
+                        <label class="party-label">اسمك في اللعبة:</label>
+                        <input id="input-host-name" type="text" class="party-input" value="المحترف ♠" maxlength="15">
+                    </div>
+
+                    <div class="party-setup-row">
+                        <div class="party-setup-col">
+                            <label class="party-label">نمط اللعبة:</label>
+                            <select id="select-party-mode" class="party-select">
+                                <option value="sambel">السامبل (13 ورقة - طرح حر)</option>
+                                <option value="tallaj">الطالّاج (14 ورقة - شرط 71 فرانك)</option>
+                            </select>
+                        </div>
+                        <div class="party-setup-col">
+                            <label class="party-label">عدد اللاعبين:</label>
+                            <select id="select-party-players" class="party-select">
+                                <option value="4" selected>4 لاعبين (طاولة كاملة)</option>
+                                <option value="3">3 لاعبين</option>
+                                <option value="2">لاعبين (مواجهة ثنائية)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button id="btn-generate-party" class="tactical-game-btn btn-gold" style="width: 100%; justify-content: center; margin: 12px 0;">
+                        <span>🔑</span>
+                        <span>إنشاء كود الغرفة والبدء</span>
+                    </button>
+
+                    <!-- شاشة الانتظار والكود المولد -->
+                    <div id="party-lobby-area" class="party-lobby-box" style="display: none;">
+                        <div class="room-code-ticket">
+                            <span class="ticket-sub">كود الغرفة للمشاركة مع الأصدقاء:</span>
+                            <div class="ticket-code-row">
+                                <span id="party-generated-code" class="ticket-code">RAMI-0000</span>
+                                <button id="btn-copy-code" class="hud-square-btn" title="نسخ الكود">📋</button>
+                            </div>
+                            <span class="ticket-hint">أرسل هذا الكود لأصدقائك ليدخلوا ويلعبوا معك فورياً!</span>
+                        </div>
+
+                        <div class="party-slots-grid" id="party-slots-container"></div>
+
+                        <div style="display: flex; gap: 10px; margin-top: 14px;">
+                            <button id="btn-start-party-match" class="tactical-game-btn btn-deploy" style="flex: 1; justify-content: center;">
+                                <span>▶️</span>
+                                <span>بدء الجولة الآن (Start Match)</span>
+                            </button>
+                            <button id="btn-fill-party-bots" class="tactical-game-btn btn-tool" style="padding: 0 12px;" title="ملء المقاعد الشاغرة ببوتات كمبيوتر">
+                                <span>🤖</span>
+                                <span>إكمال ببوتات</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. لوحة الانضمام للغرفة -->
+                <div id="panel-join-room" class="party-panel">
+                    <div class="party-setup-group">
+                        <label class="party-label">اسمك في اللعبة:</label>
+                        <input id="input-join-name" type="text" class="party-input" value="صديق 1" maxlength="15">
+                    </div>
+
+                    <div class="party-setup-group">
+                        <label class="party-label">كود الغرفة (Party Code):</label>
+                        <input id="input-join-code" type="text" class="party-input uppercase" placeholder="مثال: RAMI-7492" maxlength="12">
+                    </div>
+
+                    <button id="btn-submit-join" class="tactical-game-btn btn-deploy" style="width: 100%; justify-content: center; margin-top: 16px;">
+                        <span>🚀</span>
+                        <span>الانضمام إلى الغرفة واللعب</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة دليل القواعد -->
+    <div id="rules-modal" class="tactical-modal-backdrop">
+        <div class="tactical-modal-window">
+            <div class="modal-top-bar">
+                <div class="modal-title-group">
+                    <span class="modal-badge-diamond">◆</span>
+                    <h2>دليل وقواعد اللعب | GAME RULES</h2>
+                </div>
+                <button id="btn-close-rules" class="modal-close-icon">&times;</button>
+            </div>
+            <div class="modal-scroll-content">
+                <section class="rule-section-card">
+                    <div class="rule-card-header">
+                        <span class="rule-card-icon">🂠</span>
+                        <h3>1. الرومي المغربي: وضع السامبل (SAMBEL MODE)</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li><strong>عدد الأوراق:</strong> يتم توزيع <strong>13 ورقة</strong> لكل لاعب.</li>
+                        <li><strong>طرح المجموعات:</strong> توضع المجموعات المتسلسلة (Sequences) أو المتشابهة (Sets) على الطاولة مباشرة <strong>دون أي شروط مسبقة للنقاط</strong>.</li>
+                        <li><strong>الجوكر:</strong> مسموح باستخدام الجوكر كبديل لأي ورقة في جميع التشكيلات من أول دور.</li>
+                        <li><strong>مسار الدور:</strong> سحب ورقة ➔ تجهيز وطرح تشكيلات ➔ رمي ورقة لإنهاء الدور، وينتقل الدور في اتجاه عقارب الساعة بين اللاعبين الأربعة.</li>
+                    </ul>
+                </section>
+
+                <section class="rule-section-card highlight-card">
+                    <div class="rule-card-header">
+                        <span class="rule-card-icon">⭐</span>
+                        <h3>2. الرومي المغربي: وضع الطالّاج (TALLAJ 71)</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li><strong>عدد الأوراق:</strong> يتم توزيع <strong>14 ورقة</strong> لكل لاعب.</li>
+                        <li><strong>شرط أول نزول:</strong> أول طرح لك على الطاولة يجب أن يصل مجموع نقاط أوراقه إلى <strong>71 نقطة على الأقل</strong>.</li>
+                        <li><strong>شرط أوراق الفرانك:</strong> يجب أن تكون جميع أوراق أول نزول من أوراق فرانك نقية تماماً، أي <strong>بدون استخدام أي جوكر نهائياً</strong> في أول طرح!</li>
+                        <li><strong>بعد النزول:</strong> فور نجاح نزولك الأول، يُفتح لك حق استخدام الجواكر، والتركيب (Layoff) على أي تشكيلة في الطاولة.</li>
+                    </ul>
+                </section>
+
+                <section class="rule-section-card">
+                    <div class="rule-card-header">
+                        <span class="rule-card-icon">♠</span>
+                        <h3>3. كازينو بلاك جاك (BLACKJACK 21)</h3>
+                    </div>
+                    <ul class="rule-list">
+                        <li>الهدف هو الوصول لمجموع <strong>21 نقطة</strong> دون تجاوزها.</li>
+                        <li>الآس (A) يحسب بقيمة <strong>1 أو 11</strong> تلقائياً لتفادي الاحتراق.</li>
+                        <li>البلاك جاك الطبيعي من أول ورقتين يمنحك ربح <strong>3 إلى 2</strong>.</li>
+                    </ul>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- السكريبت الرئيسي -->
+    <script type="module" src="src/app.js"></script>
+</body>
+</html>
